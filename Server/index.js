@@ -8,7 +8,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import { register } from "module";
+import { register } from "./controllers/auth.js";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url);
@@ -41,9 +41,8 @@ app.post("/auth/register", upload.single("picture"), register);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
-mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
+mongoose.connect(process.env.MONGO_URL).then(() => {
     app.listen(PORT, () => console.log(`Server Port: ${ PORT }`))
 }).catch((error) => console.log(`${ error } did not connect`));
+
+register()

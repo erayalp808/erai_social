@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+/* REGISTERING */
 export const register = async (request, response) => {
     try {
         const {
@@ -32,6 +33,24 @@ export const register = async (request, response) => {
         })
         const savedUser = await newUser.save();
         response.status(201).json(savedUser);
+    } catch (error) {
+        response.status(500).json({ errorMessage: error.message });
+    }
+}
+
+/* LOGGING IN */
+export const login = async (request, response) => {
+    try {
+        const { email, password } = request.body;
+        const user = await User.findOne({ email: email });
+        if (!user) return response.status(400).json({ errorMessage: "User does not exist."});
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return response.status(400).json({ errorMessage: "Invalid password."});
+
+        const token = jwt.sign({ id: user._id }, process.env)
+        delete user.password;
+        response.status(200).json({ token, user });
     } catch (error) {
         response.status(500).json({ errorMessage: error.message });
     }

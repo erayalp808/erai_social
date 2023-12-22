@@ -26,3 +26,24 @@ export const createPost = async (request, response) => {
         response.status(409).json({ errorMessage: error.message });
     }
 }
+
+/* READ */
+export const getFeedPosts = async (request, response) => {
+    try {
+        const posts = await Post.find();
+
+        response.status(200).json(posts);
+    } catch (error) {
+        response.status(404).json({ errorMessage: error.message });
+    }
+}
+
+export const getUserPosts = async (request, response) => {
+    try {
+        const { userId } = request.params;
+        const posts = await Post.find({ userId });
+        response.status(200).json(posts);
+    } catch (error) {
+        response.status(404).json({ errorMessage: error.message });
+    }
+}
